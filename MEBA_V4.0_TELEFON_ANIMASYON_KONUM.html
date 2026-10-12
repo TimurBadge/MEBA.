@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="tr"><head><meta charset="utf-8"><title>MEBA V4.0 – Aile Birliği</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+:root{--a:#3b9bff;--b1:#0b3d84;--b2:#04142e;--r:28px;--g:rgba(255,255,255,.09);--gb:rgba(255,255,255,.2);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body.t2{--a:#b07cff;--b1:#4b1f8f;--b2:#12062c}body.t3{--a:#3de0a0;--b1:#0b6b4b;--b2:#021c13}body.t4{--a:#ff9a5c;--b1:#a13a16;--b2:#2a0b03}body.sharp{--r:6px}
+body{margin:0;font-family:system-ui,"Segoe UI",Arial,sans-serif;color:#fff;min-height:100vh;background:linear-gradient(135deg,var(--b1),var(--b2));background-attachment:fixed;overflow-x:hidden}
+.blob{position:fixed;border-radius:50%;filter:blur(70px);opacity:.55;z-index:0;pointer-events:none;background:var(--a)}
+.blob:nth-child(1){width:46vw;height:46vw;left:-12vw;top:-14vw;animation:fl1 14s ease-in-out infinite}
+.blob:nth-child(2){width:38vw;height:38vw;right:-10vw;bottom:-12vw;animation:fl2 17s ease-in-out infinite;opacity:.4}
+.blob:nth-child(3){width:24vw;height:24vw;left:45vw;top:30vh;animation:fl1 21s ease-in-out infinite reverse;opacity:.25}
+@keyframes fl1{50%{transform:translate(8vw,10vh) scale(1.2)}}@keyframes fl2{50%{transform:translate(-9vw,-8vh) scale(1.15)}}
+@keyframes rise{from{opacity:0;transform:translateY(34px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+@keyframes flo{50%{transform:translateY(-16px) rotate(2deg)}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 var(--a)}100%{box-shadow:0 0 0 22px transparent}}
+@keyframes shine{to{transform:translateX(260%) skewX(-20deg)}}
+@keyframes shake{20%,60%{transform:translateX(-9px)}40%,80%{transform:translateX(9px)}}
+.glass{position:relative;z-index:1;background:var(--g);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);border:1px solid var(--gb);border-radius:var(--r);box-shadow:0 10px 40px #0005,inset 0 1px 0 #fff3}
+.hid{display:none!important}
+.btn{position:relative;overflow:hidden;background:var(--a);color:#fff;border:0;border-radius:calc(var(--r)*.6);padding:14px 22px;font-size:16px;font-weight:700;cursor:pointer;transition:.25s}
+.btn:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 10px 25px #0006}.btn:active{transform:scale(.97)}
+.btn::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:#fff5;transform:skewX(-20deg)}.btn:hover::after{animation:shine .8s}
+.btn.g{background:var(--g);border:1px solid var(--gb)}
+input{width:100%;padding:14px 16px;border-radius:calc(var(--r)*.5);border:1px solid var(--gb);background:#0003;color:#fff;font-size:16px;outline:0;transition:.25s}
+input:focus{border-color:var(--a);box-shadow:0 0 0 4px #ffffff22;background:#0005}
+label{font-size:14px;opacity:.85;display:block;margin:12px 0 6px}
+.err{color:#ffc2c2;min-height:20px;font-size:14px;margin-top:8px}.shake{animation:shake .45s}
+
+/* LOGIN LAYOUT */
+#login{position:relative;z-index:1;min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center}
+.left{text-align:center;padding:30px}
+.mark{font-size:clamp(60px,9vw,120px);font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,#fff,var(--a),#fff);background-size:200%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine2 5s linear infinite}
+@keyframes shine2{to{background-position:200% 0}}
+.left h2{font-size:42px;margin:6px 0}.left p{opacity:.8;font-size:18px}
+.fam{font-size:70px;display:inline-block;animation:flo 4s ease-in-out infinite}
+.lcard{max-width:470px;width:calc(100% - 40px);margin:auto;padding:34px}
+.row{display:flex;gap:10px;flex-wrap:wrap}.row>*{flex:1;min-width:130px}
+.sep{display:flex;align-items:center;gap:12px;opacity:.7;font-size:14px;margin:18px 0}.sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--gb)}
+.pw{position:relative}.pw span{position:absolute;right:14px;top:13px;cursor:pointer;font-size:18px}
+
+/* MEBA STAGED INTRO (ORTADAN BÜYÜYEN YAZILAR) */
+#mebaIntro{
+  position:fixed;inset:0;z-index:900;display:grid;place-items:center;
+  overflow:hidden;background:linear-gradient(135deg,#00366f,#0a76d9 48%,#041f55);
+  transition:opacity .8s ease,visibility .8s ease;
+}
+#mebaIntro.hide{opacity:0;visibility:hidden;pointer-events:none}
+.intro-stage{
+  position:relative;z-index:2;width:min(900px,92vw);min-height:400px;
+  display:grid;place-items:center;text-align:center;
+}
+.intro-family{
+  position:absolute;inset:0;display:grid;place-items:center;
+  font-size:clamp(90px,15vw,180px);
+  opacity:0;transform:scale(.1);
+  animation:introZoom 1.2s cubic-bezier(.12,.9,.18,1.15) 0.2s forwards;
+  filter:drop-shadow(0 20px 45px #001b4c88);
+}
+.intro-welcome{
+  position:absolute;inset:0;display:grid;place-items:center;
+  opacity:0;transform:scale(.1);
+  animation:introZoom 1.4s cubic-bezier(.15,.85,.2,1) 1.4s forwards;
+}
+.intro-welcome h1{margin:0;font-size:clamp(38px,7vw,76px);font-weight:900;text-shadow:0 12px 40px #001b4c88}
+.intro-welcome .v{display:block;margin-top:10px;font-size:clamp(18px,3vw,30px);font-weight:800;letter-spacing:5px;opacity:.9}
+.intro-info{
+  position:absolute;inset:0;display:grid;place-items:center;
+  opacity:0;transform:scale(.1);
+  animation:introZoom 1.5s cubic-bezier(.15,.85,.2,1) 2.8s forwards;
+}
+.intro-info .bigmark{
+  font-size:clamp(70px,11vw,130px);font-weight:1000;letter-spacing:8px;
+  background:linear-gradient(90deg,#fff,#7bd1ff,#fff);background-size:200%;
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:introShine 1.4s linear infinite;
+}
+.intro-info h2{font-size:clamp(26px,5vw,50px);margin:0 0 10px}
+.intro-info p{font-size:clamp(16px,2.4vw,22px);opacity:.9;margin:0}
+
+@keyframes introZoom{
+  0%{opacity:0;transform:scale(.1)}
+  30%{opacity:1;transform:scale(1)}
+  75%{opacity:1;transform:scale(1.1)}
+  100%{opacity:0;transform:scale(1.4)}
+}
+@keyframes introShine{to{background-position:200% 0}}
+
+/* SOL VE SAĞ KARTLARIN YERİNE GEÇİŞ ANİMASYONLARI */
+/* Sol kart ilk başta gizli ve sağda durur */
+#login .left{
+  opacity: 0;
+  transform: translateX(60vw);
+  transition: transform 1s cubic-bezier(.2,.9,.3,1), opacity .8s ease;
+}
+/* Sol kartın sağdan gelip yerine oturması */
+#login.left-in .left{
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Sağdaki Giriş Kartı ilk başta ekranın sağında gizli */
+#login .right-card{
+  opacity: 0;
+  transform: translateX(100vw);
+  transition: transform 0.9s cubic-bezier(.2,.9,.3,1), opacity .7s ease;
+}
+/* Sağ kartın otomatik kayarak yerine oturması */
+#login.form-in .right-card{
+  opacity: 1;
+  transform: translateX(0);
+}
+
+
+/* V4.0 YENİ BÖLÜMLER */
+.weather-wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+.weather-main{padding:28px;min-height:260px}
+.weather-temp{font-size:72px;font-weight:900;line-height:1;margin:14px 0 8px}
+.weather-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.weather-meta .glass{padding:16px;text-align:center}
+.help-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.help-item{padding:22px}
+.help-item h3{margin:0 0 8px}
+@media(max-width:820px){.weather-wrap,.help-grid{grid-template-columns:1fr}.weather-meta{grid-template-columns:1fr}}
+
+/* APP & ADMIN STYLES */
+.wrap{position:relative;z-index:1;max-width:1100px;margin:auto;padding:28px}
+h1{font-weight:300;font-size:clamp(26px,4vw,44px);margin:0 0 20px}h1 b{font-weight:800}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(3,1fr)}
+.opt{cursor:pointer;text-align:center;padding:44px 16px;font-size:20px;transition:.3s}.opt:hover{transform:translateY(-8px) scale(1.03);background:#ffffff22}
+.opt i{display:block;font-size:46px;font-style:normal;margin-bottom:10px;animation:flo 3.5s ease-in-out infinite}
+#app{position:relative;z-index:1;padding:16px 16px 16px 106px;min-height:100vh}
+.rail{position:fixed;left:14px;top:14px;bottom:14px;width:76px;padding:14px 10px;overflow:hidden;transition:width .4s cubic-bezier(.2,.9,.3,1);z-index:20;display:flex;flex-direction:column}
+.rail:hover{width:250px}
+.rail .lg{font-size:24px;font-weight:900;text-align:center;margin-bottom:14px;white-space:nowrap}
+.nv{display:flex;align-items:center;gap:14px;width:100%;background:none;border:0;color:#fff;padding:13px 15px;border-radius:calc(var(--r)*.7);font-size:16px;cursor:pointer;margin-bottom:6px;white-space:nowrap;transition:.25s;text-align:left}
+.nv span{font-size:22px;width:26px;flex:none;text-align:center}.nv:hover{background:#ffffff1f;transform:translateX(4px)}.nv.on{background:var(--a);box-shadow:0 6px 20px #0005}
+.ban{padding:12px 18px;margin-bottom:16px;font-size:14px;display:flex;gap:12px;align-items:center}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.ic{display:flex;gap:6px;padding:8px 12px;align-items:center}.ic i{font-style:normal;font-size:20px;padding:6px 8px;border-radius:12px;cursor:pointer;transition:.2s}
+.av{width:42px;height:42px;border-radius:50%;background:var(--a);display:grid;place-items:center;font-weight:800;animation:pulse 2.4s infinite}
+.hero{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:18px}
+.cal{padding:28px;overflow:hidden;position:relative;min-height:290px}
+.cal h2{font-size:34px;font-weight:300;margin:10px 0}.cal h2 b{font-weight:800}
+.days{display:flex;gap:8px;margin-top:22px;align-items:center;flex-wrap:wrap}
+.d{background:#0004;border-radius:14px;padding:14px 18px;font-weight:700;cursor:pointer;transition:.25s}.d:hover{transform:translateY(-6px);background:#ffffff33}.d.on{background:var(--a);transform:scale(1.12);box-shadow:0 8px 20px #0006}
+.ar{width:38px;height:38px;border-radius:12px;border:0;background:#fff;color:#123;cursor:pointer;font-weight:900;transition:.2s}
+.fig{position:absolute;right:30px;bottom:-6px;font-size:130px;animation:flo 5s ease-in-out infinite;filter:drop-shadow(0 20px 20px #0006)}
+.stats{display:grid;grid-template-columns:1fr 1fr;align-items:center;text-align:center;padding:20px}
+.stats b{font-size:56px;display:block;animation:pop .8s both}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-bottom:18px}
+.box{padding:24px}.box h3{margin:0 0 10px;font-size:22px}
+.li{display:flex;justify-content:space-between;background:#fff1;padding:10px 14px;border-radius:12px;margin:7px 0;transition:.2s}
+.li button{background:none;border:0;color:#fff;cursor:pointer;font-size:16px}
+.sec{font-size:26px;margin:26px 0 14px}
+.tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.tier{padding:26px;transition:.35s;border:2px solid var(--gb)}
+.tier.cur{border-color:var(--a);box-shadow:0 0 0 4px #ffffff18,0 0 40px var(--a)}
+.tier h3{margin:0;font-size:24px}.tier .p{font-size:34px;font-weight:900;margin:6px 0}.tier ul{padding-left:20px;line-height:1.9}
+.badge{display:inline-block;background:var(--a);border-radius:20px;padding:3px 12px;font-size:12px;animation:pop .5s both}
+#abotBtn{position:fixed;right:22px;bottom:calc(22px + env(safe-area-inset-bottom,0px));width:68px;height:68px;border-radius:50%;border:2px solid var(--a);color:#fff;font-size:28px;cursor:pointer;z-index:30;background:var(--g);backdrop-filter:blur(14px);animation:pulse 2.2s infinite}
+#abot{position:fixed;right:22px;bottom:104px;width:min(380px,calc(100% - 44px));height:440px;z-index:31;display:flex;flex-direction:column;padding:16px}
+#msgs{flex:1;overflow:auto;font-size:14px;line-height:1.5}#msgs p{margin:6px 0;padding:9px 12px;border-radius:14px;background:#fff2}#msgs p.me{background:var(--a);margin-left:30px}
+.back{margin-top:14px}
+/* SMSBO */
+.smsbo-card{padding:22px;display:flex;align-items:center;gap:16px;cursor:pointer;margin-bottom:18px;transition:.25s}
+.smsbo-icon{width:58px;height:58px;border-radius:18px;background:var(--a);display:grid;place-items:center;font-size:30px;flex:none}
+.sms-layout{display:grid;grid-template-columns:300px 1fr;gap:18px;min-height:620px}
+.sms-list{padding:18px}
+.sms-person{display:flex;align-items:center;gap:12px;padding:12px;border-radius:16px;cursor:pointer;margin:6px 0;background:#fff1;transition:.2s}
+.sms-person:hover,.sms-person.on{background:var(--a)}
+.sms-avatar{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--a);font-weight:800;flex:none}
+.sms-chat{display:flex;flex-direction:column;padding:18px;min-height:620px}
+.sms-chat-head{display:flex;align-items:center;gap:12px;padding-bottom:14px;border-bottom:1px solid var(--gb)}
+.sms-messages{flex:1;overflow:auto;padding:18px 4px}
+.sms-empty{text-align:center;margin:auto;max-width:420px;padding:30px;opacity:.9}
+.sms-empty .big{font-size:60px;display:block;margin-bottom:12px}
+.sms-compose{display:flex;gap:8px;margin-top:12px}.sms-compose input{flex:1}
+.sms-msg{max-width:75%;padding:10px 14px;border-radius:16px;margin:8px 0;background:#fff2}
+.sms-msg.me{margin-left:auto;background:var(--a)}
+@media(max-width:820px){#login{grid-template-columns:1fr}.hero,.cards,.tiers,.grid{grid-template-columns:1fr}#app{padding:12px 12px 90px}.rail{top:auto;bottom:10px;left:10px;right:10px;width:auto;height:70px;flex-direction:row;padding:6px}.rail .lg,.nv b{display:none}.nv{justify-content:center;padding:10px}.fig{font-size:80px}}
+#toast{position:fixed;top:calc(18px + env(safe-area-inset-top,0px));left:50%;transform:translate(-50%,-140px);z-index:99;padding:16px 26px;max-width:92vw;text-align:center;font-weight:700;transition:transform .5s cubic-bezier(.2,.9,.3,1)}#toast.on{transform:translate(-50%,0)}
+</style>
+
+
+<style id="meba-phone-mode">
+/* MEBA Telefon Modu — özel telefon yerleşimi, mevcut işlevler korunur */
+html{width:100%;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+*,*::before,*::after{box-sizing:border-box}
+button,input,select,textarea{font:inherit;max-width:100%}
+button,.btn,.nv,.sms-person{touch-action:manipulation}
+img,video,canvas,svg{max-width:100%}
+@media(max-width:820px){
+  body{background-attachment:scroll;overflow-x:hidden}
+  #login{width:100%;min-height:100svh;grid-template-columns:minmax(0,1fr)!important;gap:14px;padding:18px 14px calc(22px + env(safe-area-inset-bottom,0px));align-content:center}
+  #login>*{min-width:0;width:100%;max-width:100%}
+  .hero,.cards,.tiers,.grid,.weather-wrap,.help-grid{grid-template-columns:minmax(0,1fr)!important;min-width:0;width:100%}
+  #app{width:100%;max-width:680px;margin:0 auto;padding:12px 12px calc(100px + env(safe-area-inset-bottom,0px))}
+  #app>*{min-width:0;max-width:100%}
+  .top{position:relative;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:2px 0 16px}
+  .top h1{font-size:clamp(21px,5.4vw,29px);line-height:1.2;overflow-wrap:anywhere;margin:0}
+  .top .ic{display:flex;gap:8px;flex-wrap:wrap;max-width:100%}
+  .glass{backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+  .box,.hero,.smsbo-card,.sms-list,.sms-chat{padding:16px;min-width:0}
+  .cards,.tiers,.grid{gap:12px}
+  .smsbo-card{align-items:center;flex-wrap:wrap}
+  .sms-layout{grid-template-columns:minmax(0,1fr)!important;gap:12px;min-height:0}
+  .sms-list,.sms-chat{min-width:0;min-height:0}
+  .sms-chat{max-height:65svh}
+  .sms-messages{min-height:160px;overflow-wrap:anywhere}
+  .sms-compose{display:flex;gap:8px;flex-wrap:wrap}
+  .sms-compose input{flex:1 1 180px;min-width:0;width:100%}
+  .weather-meta{grid-template-columns:repeat(2,minmax(0,1fr))}
+  /* Telefon alt gezinti çubuğu */
+  .rail{position:fixed!important;top:auto!important;bottom:max(8px,env(safe-area-inset-bottom,0px))!important;left:8px!important;right:8px!important;width:auto!important;height:auto!important;min-height:66px;max-height:82px;overflow-x:auto;overflow-y:hidden;display:flex!important;flex-direction:row!important;align-items:center;justify-content:flex-start;gap:5px;padding:7px!important;z-index:100;border-radius:22px}
+  .rail .lg,.nv b{display:none!important}
+  .nv{flex:0 0 50px;min-width:48px;min-height:48px;display:flex;align-items:center;justify-content:center;padding:8px;font-size:21px;border-radius:16px}
+  .fig{font-size:clamp(58px,18vw,88px)}
+  #toast{width:max-content;max-width:calc(100vw - 24px)}
+  input,select,textarea{min-height:46px;width:100%;min-width:0}
+  .btn,button{min-height:44px}
+  .sms-msg{max-width:88%;overflow-wrap:anywhere}
+  .sms-person{gap:9px;padding:10px}
+  h1,h2,h3,p,label{overflow-wrap:anywhere}
+  table{display:block;max-width:100%;overflow-x:auto}
+}
+@media(max-width:480px){
+  #app{padding:10px 10px calc(98px + env(safe-area-inset-bottom,0px))}
+  #login{padding-left:12px;padding-right:12px}
+  .hero,.box,.smsbo-card,.sms-list,.sms-chat{padding:13px;border-radius:20px}
+  .cards,.tiers,.grid{gap:10px}
+  .weather-meta{grid-template-columns:minmax(0,1fr)}
+  .top h1{font-size:22px}
+  .nv{flex-basis:47px;min-width:46px}
+}
+@media(max-width:360px){
+  #app{padding-left:8px;padding-right:8px}
+  .rail{left:5px!important;right:5px!important}
+  .nv{flex-basis:43px;min-width:43px;padding:6px}
+  .top h1{font-size:20px}
+}
+</style>
+
+<style id="meba-phone-dock">
+#phoneDock{display:none}
+@media(max-width:820px){
+ #phoneDock{position:fixed;z-index:120;left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:7px;padding:8px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;border:1px solid rgba(255,255,255,.22);border-radius:23px;background:rgba(7,34,82,.92);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 12px 32px rgba(0,0,0,.28)}
+ #phoneDock::-webkit-scrollbar{display:none}
+ #phoneDock .phone-shortcut{flex:0 0 54px;width:54px;height:54px;min-width:54px;min-height:54px;padding:0;border:0;border-radius:17px;background:transparent;color:white;font-size:25px;display:grid;place-items:center;cursor:pointer;transition:transform .18s ease,background .18s ease,box-shadow .18s ease}
+ #phoneDock .phone-shortcut:active{transform:scale(.9)}
+ #phoneDock .phone-shortcut.active{background:var(--a,#3b9bff);box-shadow:0 7px 18px rgba(0,0,0,.2)}
+ #app{padding-bottom:calc(100px + env(safe-area-inset-bottom,0px))!important}
+}
+</style>
+
+
+<style id="meba-motion-pack">
+@keyframes mebaCardIn{0%{opacity:0;transform:translateY(24px) scale(.965);filter:blur(5px)}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes mebaGlow{0%,100%{box-shadow:0 8px 24px #0003,0 0 0 rgba(59,155,255,0)}50%{box-shadow:0 12px 30px #0004,0 0 22px color-mix(in srgb,var(--a) 42%,transparent)}}
+@keyframes mebaBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@keyframes mebaDockTap{0%{transform:scale(1)}45%{transform:scale(.86) rotate(-4deg)}100%{transform:scale(1)}}
+@keyframes mebaBorder{0%,100%{border-color:var(--gb)}50%{border-color:var(--a)}}
+@keyframes mebaShimmer{0%{background-position:-180% 0}100%{background-position:180% 0}}
+#pg>.top,#pg>.sec,#pg>.glass,#pg .cards>.glass,#pg .grid>.glass,#pg .tiers>.glass,#pg .weather-wrap>* ,#pg .help-grid>*{animation:mebaCardIn .55s cubic-bezier(.2,.75,.25,1) both}
+#pg .cards>*:nth-child(2),#pg .grid>*:nth-child(2),#pg .help-grid>*:nth-child(2){animation-delay:.07s}
+#pg .cards>*:nth-child(3),#pg .grid>*:nth-child(3),#pg .help-grid>*:nth-child(3){animation-delay:.13s}
+#pg .cards>*:nth-child(4),#pg .grid>*:nth-child(4),#pg .help-grid>*:nth-child(4){animation-delay:.19s}
+#pg .glass{transition:transform .25s ease,box-shadow .3s ease,border-color .3s ease}
+#pg .glass:hover{transform:translateY(-3px);animation:mebaGlow 1.8s ease-in-out infinite}
+button,.btn,.nv,.phone-shortcut{transition:transform .18s ease,filter .25s ease,box-shadow .25s ease}
+button:active,.btn:active,.nv:active,.phone-shortcut:active{animation:mebaDockTap .3s ease}
+#phoneDock .phone-shortcut{position:relative;isolation:isolate}
+#phoneDock .phone-shortcut::after{content:"";position:absolute;inset:2px;border-radius:14px;background:linear-gradient(110deg,transparent 20%,#fff4 45%,transparent 70%);background-size:220% 100%;opacity:0;z-index:-1}
+#phoneDock .phone-shortcut.active{animation:mebaGlow 2.5s ease-in-out infinite,mebaBorder 3s ease-in-out infinite}
+#phoneDock .phone-shortcut.active::after{opacity:1;animation:mebaShimmer 2.4s linear infinite}
+#abotBtn{animation:mebaBob 2.8s ease-in-out infinite}
+input:focus,select:focus,textarea:focus{animation:mebaGlow 1.5s ease-in-out infinite}
+@media(hover:none){#pg .glass:hover{transform:none;animation:none}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+</style>
+
+</head><body>
+
+<div class="blob"></div><div class="blob"></div><div class="blob"></div>
+
+<div id="toast" class="glass"></div>
+
+<!-- ORTADAN BÜYÜYEN İNTRO EKRANI -->
+<div id="mebaIntro">
+  <div class="intro-stage">
+    <div class="intro-family">👨‍👩‍👧‍👦</div>
+    <div class="intro-welcome">
+      <div>
+        <h1>Hoş Geldiniz!</h1>
+        <span class="v">MEBA V4.0</span>
+      </div>
+    </div>
+    <div class="intro-info">
+      <div class="inner">
+        <div class="bigmark">MEBA</div>
+        <h2>Aile Birliği</h2>
+        <p>V4.0 · Güvenli ve hızlı giriş yapın.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GİRİŞ EKRANI -->
+<div id="login">
+ <div class="left">
+   <div class="mark">MEBA</div>
+   <!-- GİRİŞ EKRANI SOL TARAFINDAKİ AİLE EMOJİSİ -->
+   <div class="fam">👨‍👩‍👧‍👦</div>
+   <h2>Hoş Geldiniz!</h2>
+   <p>Aile Birliği · V.3.0<br>Güvenli ve hızlı giriş yapın.</p>
+ </div>
+ <div class="glass lcard right-card">
+  <label>Kimlik</label><input id="kimlik" placeholder="Kimlik giriniz (ör: ALPER ASLAN)" autocomplete="off">
+  <label>Şifre</label><div class="pw"><input id="sifre" type="password" placeholder="Şifre"><span id="eyeBtn">👁</span></div>
+  <div class="err" id="e1"></div>
+  <button class="btn" style="width:100%" id="btnGiris">Giriş Yap</button>
+  <div class="sep">veya şununla devam et</div>
+  <button class="btn g" style="width:100%" id="btnToggleAdm">🛡 YÖNETİCİ GİRİŞİ</button>
+  <div id="ad" class="hid" style="margin-top:12px"><div class="row" style="flex-wrap:nowrap"><input id="asifre" type="password" placeholder="Yönetici şifresi"><button class="btn" style="flex:none;min-width:0" id="btnAdmGiris">Aç</button></div><div class="err" id="e2"></div></div>
+ </div>
+</div>
+
+<div id="admin" class="wrap hid"><h1>Hoş geldiniz <b>TİMUR EGE ASLAN</b></h1><div id="cl2" style="opacity:.85;margin:-8px 0 14px"></div><div id="av"></div></div>
+
+<div id="app" class="hid">
+ <div class="glass rail"><div class="lg">MEBA</div><div id="nav"></div><div style="flex:1"></div><button class="nv" onclick="cikis()"><span>⎋</span><b>Çıkış</b></button></div>
+ <nav id="phoneDock" aria-label="MEBA telefon kısayolları">
+   <button class="phone-shortcut active" data-page="ana" onclick="phoneGo('ana')" aria-label="Ana Sayfa" title="Ana Sayfa">🏠</button>
+   <button class="phone-shortcut" data-page="smsbo" onclick="phoneGo('smsbo')" aria-label="SMSBO" title="SMSBO">💬</button>
+   <button class="phone-shortcut" data-page="takvim" onclick="phoneGo('takvim')" aria-label="Takvim" title="Takvim">🗓️</button>
+   <button class="phone-shortcut" data-page="hava" onclick="phoneGo('hava')" aria-label="Hava Durumu" title="Hava Durumu">🌤️</button>
+   <button class="phone-shortcut" data-page="alis" onclick="phoneGo('alis')" aria-label="Alışveriş" title="Alışveriş">🛒</button>
+   <button class="phone-shortcut" data-page="yap" onclick="phoneGo('yap')" aria-label="Yapılacaklar" title="Yapılacaklar">✅</button>
+   <button class="phone-shortcut" data-page="kademe" onclick="phoneGo('kademe')" aria-label="Kademe" title="Kademe">⭐</button>
+   <button class="phone-shortcut" data-page="oyun" onclick="phoneGo('oyun')" aria-label="Oyun" title="Oyun">🎮</button>
+   <button class="phone-shortcut" data-page="yardim" onclick="phoneGo('yardim')" aria-label="Yardım ve Destek" title="Yardım ve Destek">🆘</button>
+ </nav>
+ <div class="glass ban"><span>🚀</span>MEBA V4.0 yenileniyor! Yeni özellikler kısa süre içinde geliyor. <small id="cl" style="margin-left:auto;opacity:.8"></small></div>
+ <div id="pg"></div>
+ <button id="abotBtn" onclick="document.getElementById('abot').classList.toggle('hid')">✦</button>
+ <div id="abot" class="glass hid"><b>✦ ABOT · Yapay Zeka Asistanı</b><div id="msgs"></div>
+  <div class="row" style="flex-wrap:nowrap;margin-top:8px"><input id="q" placeholder="ABOT'a sor…" onkeydown="if(event.key==='Enter')sor()"><button class="btn" style="flex:none;min-width:0;padding:12px 16px" onclick="sor()">➤</button></div></div>
+</div>
+
+<script>
+// OTOMATİK İNTRO AKIŞI ANİMASYONU
+window.addEventListener("DOMContentLoaded", () => {
+  // 1. Yazılar ortadan büyüyerek sırayla geçer (toplam ~4.3sn)
+  setTimeout(() => {
+    // İntro perdesini yumuşakça kapat
+    const intro = document.getElementById("mebaIntro");
+    if(intro) intro.classList.add("hide");
+
+    // Giriş ekranı normal şekilde gelir; bakım mesajı form kartının üzerinde görünür
+    const login = document.getElementById("login");
+    if(login) login.style.display = "grid";
+    setTimeout(()=>{ if(login) login.classList.add("left-in"); }, 50);
+    setTimeout(()=>{ if(login) login.classList.add("form-in"); }, 650);
+
+  }, 4300);
+});
+
+const DEFU={ALPER:{ad:"ALPER ASLAN",pass:"789456123"},HANDAN:{ad:"HANDAN ASLAN",pass:"123456789"}},APASS="20262808";let UYE={},UPASS={};
+function syncUsers(){if(!S.users||!Object.keys(S.users).length)S.users=JSON.parse(JSON.stringify(DEFU));if(!S.exp)S.exp={};UYE={};UPASS={};Object.entries(S.users).forEach(([k,u])=>{UYE[k]=u.ad;UPASS[k]=u.pass;if(!S.tiers[k])S.tiers[k]="UCRETSIZ"})}
+const TIER={UCRETSIZ:{ad:"Ücretsiz",fiyat:"0₺",lim:3},ABONMAN:{ad:"Abonman",fiyat:"50₺ / 2 aylık",lim:99},PLUS:{ad:"Plus",fiyat:"60₺ / 2,5 aylık",lim:99}};
+let S={tiers:{ALPER:"ABONMAN",HANDAN:"PLUS"},shop:[],todo:[]};try{const z=JSON.parse(localStorage.getItem("meba-s"));if(z&&z.tiers)S=Object.assign(S,z)}catch(e){}
+syncUsers();
+let pstart=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10);
+function bitTxt(){const e=bitisHesapla(pstart,pend);return e?"Bitiş: "+fmt(e)+" ("+(pend==="PLUS"?"2,5 ay":"2 ay")+" sonra, o gün Ücretsiz'e düşer)":""}
+let ref=null,me=null,sayfa="ana",off=0,sel=0,pend=null,anim=true,sh=0,smsSecili=null;
+const $=i=>document.getElementById(i);let tt;function toast(m){const t=$("toast");if(!t)return;t.textContent=m;t.classList.add("on");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("on"),4500)}
+const norm=s=>(s||"").toLocaleLowerCase("tr").replace(/ı/g,"i").normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/\s+/g,"");
+const cur=()=>(document.body.className.match(/t\d/)||[""])[0];
+function theme(t,s){document.body.className=(t||"")+(s?" sharp":"");try{localStorage.setItem("meba-th",JSON.stringify([t,s]))}catch(e){}}
+try{const x=JSON.parse(localStorage.getItem("meba-th"));if(x){sh=x[1];theme(x[0],x[1])}}catch(e){}
+
+const DAY=86400000;
+function bitisHesapla(str,t){const p=(str||"").split("-").map(Number);if(p.length<3||!p[0])return 0;const d=new Date(p[0],p[1]-1,p[2]);d.setMonth(d.getMonth()+2);if(t==="PLUS")d.setDate(d.getDate()+15);return d.getTime()}
+const fmt=ms=>new Date(ms).toLocaleDateString("tr-TR",{day:"numeric",month:"long",year:"numeric"});
+function kalanTxt(k){const t=S.tiers[k];if(t==="UCRETSIZ")return"";const e=S.exp&&S.exp[k];if(!e)return"süre sınırı yok";const d=Math.max(1,Math.ceil((e-Date.now())/DAY));return d+" gün kaldı · bitiş: "+fmt(e)}
+function sweep(){let ch=false;if(!S.exp)S.exp={};Object.keys(UYE).forEach(k=>{if(S.tiers[k]!=="UCRETSIZ"&&S.exp[k]&&Date.now()>=S.exp[k]){S.tiers[k]="UCRETSIZ";delete S.exp[k];ch=true}});if(ch){save();toast("⏰ Süresi dolan üyelerin paketi Ücretsiz'e düşer.")}return ch}
+setInterval(()=>{if(sweep()){if(me)draw();else if(!$("admin").classList.contains("hid"))show()}},30000);
+function loc(){try{localStorage.setItem("meba-s",JSON.stringify(S))}catch(e){}}
+function save(){loc();if(ref)return ref.set(S).catch(()=>toast("⚠ Buluta yazılamadı"))}
+function bad(id,m){const el=$(id);if(!el)return;el.textContent=m;const c=el.parentElement;if(c){c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake")}}
+
+function giris(){
+ const kInp=$("kimlik");const pInp=$("sifre");if(!kInp||!pInp)return;
+ const kVal=kInp.value,pVal=pInp.value;
+ const k=Object.keys(UYE).find(x=>norm(UYE[x])===norm(kVal)||norm(x)===norm(kVal));
+ if(k&&pVal===UPASS[k]){me=k;sayfa="ana";anim=true;$("login").classList.add("hid");$("app").classList.remove("hid");draw();return}
+ if(pVal===APASS){admOpen();return}
+ bad("e1",k?"Şifre yanlış.":"Kimlik bulunamadı. (ALPER ASLAN / HANDAN ASLAN)")
+}
+function admGiris(){const aInp=$("asifre");if(!aInp)return;if(aInp.value===APASS)admOpen();else bad("e2","Şifre yanlış.")}
+function admOpen(){sweep();$("login").classList.add("hid");$("admin").classList.remove("hid");show()}
+function cikis(){me=null;["admin","app"].forEach(i=>{const el=$(i);if(el)el.classList.add("hid")});$("login").classList.remove("hid");["kimlik","sifre","asifre"].forEach(i=>{const el=$(i);if(el)el.value=""});if($("e1"))$("e1").textContent="";if($("e2"))$("e2").textContent=""}
+
+document.addEventListener("DOMContentLoaded",()=>{
+ const eye=$("eyeBtn");if(eye){eye.onclick=()=>{const s=$("sifre");if(s)s.type=s.type==='password'?'text':'password'}}
+ const sInp=$("sifre");if(sInp){sInp.onkeydown=e=>{if(e.key==='Enter')giris()}}
+ const btnG=$("btnGiris");if(btnG){btnG.onclick=giris}
+ const btnT=$("btnToggleAdm");if(btnT){btnT.onclick=()=>{const ad=$("ad");if(ad)ad.classList.toggle("hid")}}
+ const aInp=$("asifre");if(aInp){aInp.onkeydown=e=>{if(e.key==='Enter')admGiris()}}
+ const btnAG=$("btnAdmGiris");if(btnAG){btnAG.onclick=admGiris}
+});
+
+function show(w){const v=$("av");if(!v)return;let h="";
+ const B=(f,t)=>`<button class="btn g back" onclick="${f}">← ${t||"Geri"}</button>`;
+ if(w==="tema")h=`<div class="glass box"><h3>Tema</h3><div class="row"><button class="btn" onclick="theme('',sh)">Mavi</button><button class="btn" onclick="theme('t2',sh)">Mor</button><button class="btn" onclick="theme('t3',sh)">Yeşil</button><button class="btn" onclick="theme('t4',sh)">Turuncu</button></div><h3 style="margin-top:22px">Şekil</h3><div class="row"><button class="btn g" onclick="sh=0;theme(cur(),0)">Yuvarlak köşe</button><button class="btn g" onclick="sh=1;theme(cur(),1)">Keskin köşe</button></div></div>`+B("show()");
+ else if(w==="uye")h=`<div class="glass box"><h3>Lütfen üye seçin</h3><div class="row">${Object.entries(UYE).map(([k,n])=>`<button class="btn" onclick="pend=null;show('k${k}')">${n.replace(/</g,"&lt;")}</button>`).join("")||"<p>Henüz üye yok. Önce Üyeleri Yönet bölümünden üye ekle.</p>"}</div></div>`+B("show()");
+ else if(w&&w[0]==="k"){const k=w.slice(1);if(!pend)pend=S.tiers[k];h=`<div class="glass box"><h3>${UYE[k]} – kademe ayarla</h3><p>Şu an kayıtlı: <b>${TIER[S.tiers[k]].ad}</b>${kalanTxt(k)?" · "+kalanTxt(k):""}</p><div class="row">${["UCRETSIZ","ABONMAN","PLUS"].map(t=>`<button class="btn ${pend===t?"":"g"}" onclick="pend='${t}';show('k${k}')">${pend===t?"✔ ":""}${TIER[t].ad} ·${TIER[t].fiyat}</button>`).join("")}</div>${pend!=="UCRETSIZ"?`<label>Başlangıç tarihi</label><input type="date" id="bas" value="${pstart}" onchange="pstart=this.value;$('bit').textContent=bitTxt()"><p id="bit" style="margin:10px 0 0;opacity:.9">${bitTxt()}</p>`:`<p style="opacity:.8;margin-top:12px">Ücretsiz kademede süre yok.</p>`}<div style="margin-top:20px"><button class="btn" style="width:100%" onclick="kaydet('${k}')">💾 Kaydet</button></div><small style="opacity:.8;display:block;margin-top:10px">Kaydedince ${UYE[k]} giriş yaptığında "Buna sahipsin" olarak bu kademeyi görür.</small></div>`+B("show('uye')")}
+ else if(w==="yon")h=`<div class="glass box"><h3>👥 Üyeler</h3>${Object.entries(UYE).map(([k,n])=>`<div class="li" style="flex-wrap:wrap;gap:8px;align-items:center"><span><b>${n.replace(/</g,"&lt;")}</b> · ${TIER[S.tiers[k]].ad}<br><small style="opacity:.75">Şifre: ${(UPASS[k]||"").replace(/</g,"&lt;")}</small></span><span><button class="btn g" style="padding:8px 14px" onclick="show('p${k}')">🔑 Şifre</button> <button class="btn g" style="padding:8px 14px" onclick="show('x${k}')">🗑 Sil</button></span></div>`).join("")||"<p style='opacity:.8'>Henüz üye yok.</p>"}<h3 style="margin-top:22px">➕ Yeni üye ekle</h3><label>Ad Soyad</label><input id="ynad" placeholder="Örn: AYŞE ASLAN" autocomplete="off"><label>Şifre (en az 4 karakter)</label><input id="ynsf" placeholder="Şifre" autocomplete="off" onkeydown="if(event.key==='Enter')uyeEkle()"><div style="margin-top:16px"><button class="btn" style="width:100%" onclick="uyeEkle()">➕ Üye Ekle</button></div><small style="opacity:.75;display:block;margin-top:10px">Yeni üye Ücretsiz kademeyle başlar. Kademesini "Birisinin KADEMESİNİ Düzelt" bölümünden verebilirsin.</small></div>`+B("show()");
+ else if(w&&w[0]==="p"&&UYE[w.slice(1)]){const k=w.slice(1);h=`<div class="glass box"><h3>🔑 ${UYE[k].replace(/</g,"&lt;")} – şifre değiştir</h3><label>Yeni şifre (en az 4 karakter)</label><input id="ysf" placeholder="Yeni şifre" autocomplete="off" onkeydown="if(event.key==='Enter')sifreKaydet('${k}')"><div style="margin-top:16px"><button class="btn" style="width:100%" onclick="sifreKaydet('${k}')">💾 Şifreyi Kaydet</button></div></div>`+B("show('yon')")}
+ else if(w&&w[0]==="x"&&UYE[w.slice(1)]){const k=w.slice(1);h=`<div class="glass box"><h3>🗑 ${UYE[k].replace(/</g,"&lt;")} silinsin mi?</h3><p>Üyenin hesabı, paketi ve süresi silinir. Bu işlem geri alınamaz.</p><div class="row"><button class="btn" onclick="uyeSil('${k}')">Evet, sil</button><button class="btn g" onclick="show('yon')">Vazgeç</button></div></div>`}
+ else h=`<div class="grid"><div class="glass opt" onclick="show('tema')"><i>🎨</i>Şekilleri / Temaları Değiştir</div><div class="glass opt" onclick="show('uye')"><i>👤</i>Birisinin KADEMESİNİ Düzelt</div><div class="glass opt" onclick="show('yon')"><i>👥</i>Üyeleri Yönet (ekle · şifre · sil)</div><div class="glass opt" onclick="cikis()"><i>⎋</i>Çıkış</div></div>`;
+ v.innerHTML=h}
+
+async function kaydet(k){if(!pend)return;const secilen=pend;if(!S.exp)S.exp={};
+ S.tiers[k]=secilen;
+ if(secilen==="UCRETSIZ")delete S.exp[k];else{const e=bitisHesapla(pstart,secilen);if(!e){toast("⚠ Başlangıç tarihini seç");return}if(e<=Date.now()){toast("⚠ Bu tarihte süre zaten dolmuş, daha yeni bir başlangıç tarihi seç");return}S.exp[k]=e}
+ pend=null;loc();
+ const ek=S.exp[k]?" · bitiş "+fmt(S.exp[k]):"";
+ if(ref){try{await ref.set(S);toast("✔ Kaydedildi: "+UYE[k]+" → "+TIER[secilen].ad+ek+" (bulutta)")}catch(e){toast("⚠ Bu cihaza kaydedildi ama buluta yazılamadı")}}
+ else toast("✔ Kaydedildi: "+UYE[k]+" → "+TIER[secilen].ad+ek+" (bu cihazda; bulut bağlı değil)");
+ show('uye')}
+async function yaz(msg){loc();if(ref){try{await ref.set(S);toast("✔ "+msg+" (bulutta)")}catch(e){toast("⚠ Bu cihaza kaydedildi ama buluta yazılamadı")}}else toast("✔ "+msg+" (bu cihazda; bulut bağlı değil)")}
+function uyeEkle(){const ad=$("ynad").value.trim().toLocaleUpperCase("tr").replace(/\s+/g," "),sf=$("ynsf").value.trim();
+ if(ad.length<3){toast("⚠ Ad Soyad en az 3 harf olmalı");return}
+ if(sf.length<4){toast("⚠ Şifre en az 4 karakter olmalı");return}
+ if(sf===APASS){toast("⚠ Bu şifre yönetici şifresiyle aynı olamaz");return}
+ if(Object.values(UYE).some(n=>norm(n)===norm(ad))){toast("⚠ Bu isimde bir üye zaten var");return}
+ const id="U"+Date.now().toString(36);S.users[id]={ad,pass:sf};S.tiers[id]="UCRETSIZ";syncUsers();yaz(ad+" eklendi (Ücretsiz)");show("yon")}
+function sifreKaydet(k){const sf=$("ysf").value.trim();
+ if(sf.length<4){toast("⚠ Şifre en az 4 karakter olmalı");return}
+ if(sf===APASS){toast("⚠ Bu şifre yönetici şifresiyle aynı olamaz");return}
+ S.users[k].pass=sf;syncUsers();yaz(UYE[k]+" şifresi değiştirildi");show("yon")}
+function uyeSil(k){const ad=UYE[k];delete S.users[k];delete S.tiers[k];if(S.exp)delete S.exp[k];syncUsers();yaz(ad+" silindi");show("yon")}
+function go(p){sayfa=p;anim=true;draw()}
+function liste(key,ad,i){const a=S[key],t=TIER[S.tiers[me]];
+ return `<div class="glass box"><h3>${key==="shop"?"🛒":"✅"} ${ad}</h3>${a.length?a.map((x,j)=>`<div class="li">${x.replace(/</g,"&lt;")}<button onclick="del('${key}',${j})">✕</button></div>`).join(""):"<p style='opacity:.7'>Şimdilik yok, hemen oluştur</p>"}
+ <div class="row" style="flex-wrap:nowrap;margin-top:12px"><input id="i_${key}" placeholder="Yeni ekle…" onkeydown="if(event.key==='Enter')add('${key}')"><button class="btn" style="flex:none;min-width:0" onclick="add('${key}')">Oluştur</button></div>
+ ${t.lim<99?`<small style="opacity:.7;display:block;margin-top:8px">Ücretsiz kademede en fazla ${t.lim} öğe.</small>`:""}</div>`}
+function add(k){const v=$("i_"+k).value.trim();if(!v)return;if(S[k].length>=TIER[S.tiers[me]].lim){toast("Limit doldu. Kademe yükseltmek için yetkili biriyle iletişime geç.");return}S[k].push(v);save();anim=false;draw()}
+function del(k,i){S[k].splice(i,1);save();anim=false;draw()}
+function tiers(){const t=S.tiers[me];const L=[["UCRETSIZ",["Sınırlı ABOT","Sınırlı Yapılacaklar","Sınırlı Alışveriş","Ücretsiz takvim"],"Kademe yükseltmek için yetkili biriyle iletişime geç."],["ABONMAN",["2 aylık ABOT","2 aylık Yapılacaklar","2 aylık Alışveriş","Ücretsiz takvim"],"Satın almak için yetkili biriyle iletişime geçerek ödemeyi nakit verebilirsin."],["PLUS",["2,5 aylık ABOT","2,5 aylık Yapılacaklar","2,5 aylık Alışveriş","Takvime güncelleme"],"Satın almak için yetkili biriyle iletişime geçerek ödemeyi nakit verebilirsin."]];
+ return `<div class="sec">⭐ Kademeler</div><div class="tiers">${L.map(([k,f,n],i)=>`<div class="glass tier ${k===t?"cur":""}"><h3>${TIER[k].ad}${k===t?'<span class="badge">Buna sahipsin</span>':""}</h3><div class="p">${TIER[k].fiyat}</div>${k===t&&kalanTxt(me)?`<div style="margin:-4px 0 8px;font-weight:700">⏳ ${kalanTxt(me)}</div>`:""}<b>İçindekiler</b><ul>${f.map(x=>`<li>${x}</li>`).join("")}</ul><small>${n}</small></div>`).join("")}</div>`}
+function kontrolPaneli(){const best=(()=>{try{return +localStorage.getItem("meba-best")||0}catch(e){return 0}})();const tr=new Date().toLocaleDateString("tr-TR",{day:"numeric",month:"long",weekday:"long"});return `<div class="glass box" style="margin:0 0 18px;padding:20px"><div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap"><div><small style="opacity:.7">MEBA KONTROL MERKEZİ</small><h3 style="margin:3px 0 0">📌 ${tr}</h3></div><span class="badge">V4.0</span></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px"><div class="glass" style="padding:14px;text-align:center"><b style="font-size:24px">${S.shop.length}</b><small style="display:block;opacity:.75">🛒 Alışveriş</small></div><div class="glass" style="padding:14px;text-align:center"><b style="font-size:24px">${S.todo.length}</b><small style="display:block;opacity:.75">✅ Görev</small></div><div class="glass" style="padding:14px;text-align:center"><b style="font-size:24px">${TIER[S.tiers[me]].ad}</b><small style="display:block;opacity:.75">⭐ Paket</small></div><div class="glass" style="padding:14px;text-align:center"><b style="font-size:24px">${best}</b><small style="display:block;opacity:.75">🚀 Roket Rekoru</small></div></div></div>`}
+function hero(){const now=new Date(),s=new Date(now);s.setDate(s.getDate()+sel);
+ const days=[-3,-2,-1,0,1,2,3].map(o=>{const d=new Date(now);d.setDate(d.getDate()+off+o);const v=off+o;return `<div class="d ${v===sel?"on":""}" onclick="sel=${v};anim=false;draw()">${d.getDate()}</div>`}).join("");
+ return `<div class="hero"><div class="glass cal"><small style="opacity:.8">📅 Takvim</small><h2><b>${s.toLocaleDateString("tr-TR",{day:"numeric",month:"long"})}</b>, ${s.toLocaleDateString("tr-TR",{weekday:"long"})}</h2><div style="opacity:.85">Bugün etkinliğiniz bulunmuyor</div><div class="days"><button class="ar" onclick="off-=7;anim=false;draw()">‹</button>${days}<button class="ar" onclick="off+=7;anim=false;draw()">›</button></div><div class="fig">👨‍👩‍👧‍👦</div></div>
+ <div class="glass stats"><div><b>${S.shop.length}</b><small>Alışveriş öğesi</small></div><div><b>${S.todo.length}</b><small>Yapılacak</small></div></div></div>`}
+function smsbo(){
+ const users=Object.entries(UYE).filter(([k])=>k!==me);
+ const sec=smsSecili&&UYE[smsSecili]?smsSecili:null;
+ const selected=sec?UYE[sec]:"";
+ const list=users.length?users.map(([k,n])=>`<div class="sms-person ${k===sec?"on":""}" data-name="${norm(n)}" onclick="smsSec('${k}')"><div class="sms-avatar">${n[0]}</div><div><b>${n.replace(/</g,"&lt;")}</b><small style="display:block;opacity:.7">SMSBO</small></div></div>`).join(""):`<div class="sms-empty"><span class="big">👥</span><b>Hiç arkadaşın yok, hadi arkadaş ol</b></div>`;
+ let chat="";
+ if(sec){
+   chat=`<div class="sms-chat-head"><div class="sms-avatar">${selected[0]}</div><div><b>${selected.replace(/</g,"&lt;")}</b><small style="display:block;opacity:.7">SMSBO mesajlaşması</small></div></div><div class="sms-messages" id="smsMsgs"><div class="sms-empty"><span class="big">💬</span><b>Henüz mesaj yok</b></div></div><div class="sms-compose"><input id="smsInput" placeholder="Mesaj yaz..." onkeydown="if(event.key==='Enter')smsGonder()"><button class="btn" onclick="smsGonder()">➤ Gönder</button></div>`;
+ }else if(users.length){chat=`<div class="sms-empty"><span class="big">💬</span><h2>SMSBO</h2><div>Kişilerden birini seçerek mesajlaşmaya başlayabilirsin.</div></div>`;}
+ return `<div class="sec">💬 SMSBO</div><div class="sms-layout"><div class="glass sms-list"><h2>Kişiler</h2><input class="sms-search" id="smsAra" placeholder="🔍 Kişi ara..." oninput="smsFiltre()"><div id="smsPeople">${list}</div></div><div class="glass sms-chat">${chat||`<div class="sms-empty"><span class="big">👥</span><b>Hiç arkadaşın yok, hadi arkadaş ol</b></div>`}</div></div>`;
+}
+function smsFiltre(){const v=norm($("smsAra")?.value||"");document.querySelectorAll(".sms-person").forEach(e=>e.style.display=norm(e.dataset.name).includes(v)?"flex":"none");}
+function smsSec(k){smsSecili=k;anim=false;draw();}
+function smsGonder(){const i=$("smsInput"),box=$("smsMsgs");if(!i||!box)return;const v=i.value.trim();if(!v)return;const empty=box.querySelector(".sms-empty");if(empty)empty.remove();box.innerHTML+=`<div class="sms-msg me">${v.replace(/</g,"&lt;")}</div>`;i.value="";box.scrollTop=box.scrollHeight;}
+function havaKod(k){const m={0:['☀️','Açık'],1:['🌤️','Çoğunlukla açık'],2:['⛅','Parçalı bulutlu'],3:['☁️','Kapalı'],45:['🌫️','Sisli'],48:['🌫️','Kırağılı sis'],51:['🌦️','Hafif çiseleme'],53:['🌦️','Çiseleme'],55:['🌧️','Yoğun çiseleme'],56:['🌧️','Hafif dondurucu çiseleme'],57:['🌧️','Yoğun dondurucu çiseleme'],61:['🌦️','Hafif yağmur'],63:['🌧️','Yağmur'],65:['🌧️','Kuvvetli yağmur'],66:['🌧️','Hafif dondurucu yağmur'],67:['🌧️','Kuvvetli dondurucu yağmur'],71:['🌨️','Hafif kar'],73:['🌨️','Kar'],75:['❄️','Kuvvetli kar'],77:['❄️','Kar taneleri'],80:['🌦️','Hafif sağanak'],81:['🌧️','Sağanak'],82:['⛈️','Kuvvetli sağanak'],85:['🌨️','Kar sağanağı'],86:['🌨️','Kuvvetli kar sağanağı'],95:['⛈️','Gök gürültülü fırtına'],96:['⛈️','Dolu ihtimalli fırtına'],99:['⛈️','Kuvvetli dolulu fırtına']};return m[k]||['🌡️','Bilinmeyen durum']}
+function havaDurumu(){return `<div class="sec">🌤️ Hava Durumu</div><div class="weather-wrap"><div class="glass weather-main"><div id="havaDurumuIcerik"><h2 style="margin:0 0 8px">Konumuna göre hava durumu</h2><p style="opacity:.8">Telefondaki konum iznini ver; bulunduğun yere göre hava durumunu getirelim.</p><button class="btn" onclick="havaYukle()">📍 Konumumu Kullan ve Hava Durumunu Getir</button></div></div><div class="glass box"><h3 style="margin-top:0">🌦️ Hava Durumu</h3><p style="opacity:.8">Anlık sıcaklık, hava durumu ve rüzgâr bilgisi görüntülenir.</p><small style="opacity:.65">Veri: Open-Meteo</small></div></div>`}
+async function havaYukle(){const el=$("havaDurumuIcerik");if(!el)return;el.innerHTML='<h2 style="margin:0">Yükleniyor…</h2><p style="opacity:.8">Konum ve hava durumu bilgisi alınıyor.</p>';try{
+ if(!navigator.geolocation)throw new Error('Konum desteklenmiyor');
+ const pos=await new Promise((resolve,reject)=>navigator.geolocation.getCurrentPosition(resolve,reject,{enableHighAccuracy:false,timeout:10000,maximumAge:300000}));
+ const lat=pos.coords.latitude,lon=pos.coords.longitude;
+ const u=`https://api.open-meteo.com/v1/forecast?latitude=${encodeURIComponent(lat)}&longitude=${encodeURIComponent(lon)}&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=auto`;
+ const r=await fetch(u);if(!r.ok)throw new Error('Hava servisine ulaşılamadı');const d=await r.json();const c=d.current||{};const q=havaKod(c.weather_code);el.innerHTML=`<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap"><div style="font-size:64px">${q[0]}</div><div><h2 style="margin:0">${q[1]}</h2><div class="weather-temp">${Math.round(c.temperature_2m)}°C</div></div></div><div class="weather-meta"><div class="glass"><b>🌡️ Hissedilen</b><br>${Math.round(c.apparent_temperature)}°C</div><div class="glass"><b>💧 Nem</b><br>${Math.round(c.relative_humidity_2m)}%</div><div class="glass"><b>💨 Rüzgâr</b><br>${Math.round(c.wind_speed_10m)} km/sa</div></div><small style="display:block;margin-top:14px;opacity:.65">Konum: ${lat.toFixed(2)}, ${lon.toFixed(2)} · Güncelleme: ${c.time||''}</small>`;
+ }catch(e){el.innerHTML='<h2 style="margin:0 0 8px">Hava durumu alınamadı</h2><p style="opacity:.8">Konum izni verilmemiş olabilir veya hava servisine ulaşılamadı.</p><button class="btn" onclick="havaYukle()">↻ Tekrar Dene</button>'}}
+function yardimDestek(){return `<div class="sec">🆘 Yardım & Destek</div><div class="help-grid"><div class="glass help-item"><h3>🔐 Giriş yapamıyorum</h3><p>Kimlik ve şifreni doğru girdiğinden emin ol. Şifreni unuttuysan yönetici tarafından değiştirilmesini isteyebilirsin.</p></div><div class="glass help-item"><h3>⭐ Kademe / Paket</h3><p>Paket bilgini ana sayfadaki profil alanından ve Kademe bölümünden kontrol edebilirsin.</p></div><div class="glass help-item"><h3>🎮 Oyun</h3><p>Sol menüdeki Oyun bölümünden Uzay Roketi oyununu açıp oynayabilirsin.</p></div><div class="glass help-item"><h3>🌤️ Hava Durumu</h3><p>Hava Durumu bölümünde “Hava Durumunu Getir” düğmesine basarak konumuna göre anlık bilgileri görebilirsin.</p></div><div class="glass help-item"><h3>🤖 ABOT</h3><p>Sağ alttaki ✦ ABOT düğmesinden MEBA ile ilgili temel sorularını sorabilirsin.</p></div><div class="glass help-item"><h3>📩 Destek</h3><p>Bir sorun devam ederse MEBA yöneticinle iletişime geç.</p></div></div>`}
+
+function draw(){syncUsers();sweep();if(me&&!UYE[me]){cikis();return}if(!me)return;
+ const N=[["ana","🏠","Anasayfa"],["smsbo","💬","SMSBO"],["takvim","📅","Takvim"],["hava","🌤️","Hava Durumu"],["alis","🛒","Alışveriş"],["yap","✅","Yapılacaklar"],["kademe","⭐","Kademe"],["oyun","🎮","Oyun"],["yardim","🆘","Yardım & Destek"]];
+ const navEl=$("nav");if(navEl)navEl.innerHTML=N.map(([k,i,n])=>`<button class="nv ${k===sayfa?"on":""}" onclick="go('${k}')"><span>${i}</span><b>${n}</b></button>`).join("");
+ const dock=document.getElementById("phoneDock");if(dock)dock.querySelectorAll(".phone-shortcut").forEach(b=>b.classList.toggle("active",b.dataset.page===sayfa));
+ if(sayfa==="oyun"&&$("cv"))return;
+ let h=`<div class="top"><h1 style="margin:0">Hoş Geldin <b>${UYE[me]}</b> <span class="badge" style="font-size:14px;vertical-align:middle">📦 Paketin: ${TIER[S.tiers[me]].ad}${kalanTxt(me)?" · ⏳ "+kalanTxt(me).split(" · ")[0]:""}</span></h1><div class="glass ic"><i>🔍</i><i>🔔</i><i>✉</i><i>⭐</i><div class="av">${UYE[me][0]}</div></div></div>`;
+ if(sayfa==="ana")h+=hero()+kontrolPaneli()+`<div class="glass smsbo-card" onclick="go('smsbo')"><div class="smsbo-icon">💬</div><div style="flex:1"><h3 style="margin:0">SMSBO</h3><small style="opacity:.8">WhatsApp gibi mesajlaş, kişilerini ara ve seç.</small></div><button class="btn">💬 Aç</button></div><div class="glass box" style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;cursor:pointer;margin-bottom:18px" onclick="go('oyun')"><span style="font-size:54px;display:inline-block;animation:flo 3s ease-in-out infinite">🚀</span><div style="flex:1;min-width:180px"><h3 style="margin:0">Oyun · Uzay Roketi</h3><small style="opacity:.8">Engellerden kaç, en yüksek puanı yap!</small></div><button class="btn">🎮 Hemen Başla</button></div><div class="cards">${liste("shop","Alışveriş Listesi",3)}${liste("todo","Yapılacaklar",4)}</div><div class="glass box" style="opacity:.9">🔜 <b>Yakında:</b> yeni özellikler</div>`+tiers();
+ else if(sayfa==="smsbo")h+=smsbo();
+ else if(sayfa==="takvim")h+=hero();
+ else if(sayfa==="hava")h+=havaDurumu();
+ else if(sayfa==="yardim")h+=yardimDestek();
+ else if(sayfa==="alis")h+=liste("shop","Alışveriş Listesi",1);
+ else if(sayfa==="yap")h+=liste("todo","Yapılacaklar",1);
+ else if(sayfa==="oyun")h+=`<div class="glass box"><h3>🚀 Uzay Roketi</h3><canvas id="cv" width="360" height="520" style="width:100%;max-width:360px;display:block;margin:auto;border-radius:var(--r);touch-action:none;background:#0004"></canvas><div class="row" style="margin:14px auto 0;max-width:360px;flex-wrap:nowrap"><button class="btn g" id="bl" style="min-width:0">◀</button><button class="btn" id="obtn" style="min-width:0;flex:2">▶ Başla</button><button class="btn g" id="br" style="min-width:0">▶</button></div><small style="display:block;text-align:center;opacity:.8;margin-top:10px">Klavyede ← → ya da ekranda parmağınla sağa-sola kaydır.</small></div>`;
+ else h+=tiers();
+ const pgEl=$("pg");if(pgEl)pgEl.innerHTML=h;anim=false;if(sayfa==="oyun")oyunKur()}
+const K={l:0,r:0};
+addEventListener("keydown",e=>{if(sayfa!=="oyun"||!me)return;const k=e.key;if(k==="ArrowLeft"||k==="a"||k==="A"){K.l=1;e.preventDefault()}if(k==="ArrowRight"||k==="d"||k==="D"){K.r=1;e.preventDefault()}});
+addEventListener("keyup",e=>{const k=e.key;if(k==="ArrowLeft"||k==="a"||k==="A")K.l=0;if(k==="ArrowRight"||k==="d"||k==="D")K.r=0});
+function oyunKur(){cancelAnimationFrame(window.__raf);const c=$("cv"),x=c?c.getContext("2d"):null,W=360,H=520,R=Math.random;if(!c||!x)return;
+ let st="bekle",px=W/2,tx=px,ob=[],sc=0,t=0,best=0;try{best=+localStorage.getItem("meba-best")||0}catch(e){}
+ const stars=Array.from({length:45},()=>({x:R()*W,y:R()*H,s:.5+R()*2}));
+ const ac=getComputedStyle(document.body).getPropertyValue("--a").trim()||"#3b9bff";
+ function baslat(){ob=[];sc=0;t=0;px=tx=W/2;st="oyun"}
+ const oBtn=$("obtn");if(oBtn)oBtn.onclick=()=>{baslat();oBtn.textContent="🔄 Yeniden"};
+ const hold=(id,k)=>{const b=$(id);if(!b)return;b.onpointerdown=()=>K[k]=1;b.onpointerup=b.onpointerleave=()=>K[k]=0};hold("bl","l");hold("br","r");
+ const mv=e=>{const r=c.getBoundingClientRect();tx=(e.clientX-r.left)*W/r.width};
+ c.onpointermove=mv;c.onpointerdown=e=>{mv(e);if(st!=="oyun"){baslat();if(oBtn)oBtn.textContent="🔄 Yeniden"}};
+ function bit(){st="bitti";if(sc>best){best=sc;try{localStorage.setItem("meba-best",best)}catch(e){}}}
+ function txt(m,y,sz,a){x.fillStyle="#fff";x.globalAlpha=a||1;x.font="700 "+sz+"px system-ui";x.textAlign="center";x.fillText(m,W/2,y);x.globalAlpha=1}
+ function roket(){x.save();x.translate(px,H-70);const f=8+R()*14;
+  x.fillStyle="#ffb347";x.beginPath();x.moveTo(-7,16);x.lineTo(0,16+f+8);x.lineTo(7,16);x.fill();
+  x.fillStyle=ac;x.beginPath();x.moveTo(-14,18);x.lineTo(-9,0);x.lineTo(-9,18);x.fill();x.beginPath();x.moveTo(14,18);x.lineTo(9,0);x.lineTo(9,18);x.fill();
+  x.fillStyle="#fff";x.beginPath();x.moveTo(0,-26);x.quadraticCurveTo(13,-6,9,18);x.lineTo(-9,18);x.quadraticCurveTo(-13,-6,0,-26);x.fill();
+  x.fillStyle="#081b3e";x.beginPath();x.arc(0,-4,5,0,Math.PI*2);x.fill();
+  x.strokeStyle=ac;x.lineWidth=2;x.beginPath();x.arc(0,-4,5,0,Math.PI*2);x.stroke();x.restore()}
+ function eng(o){x.fillStyle="#ff6b6b";x.beginPath();x.arc(o.x,o.y,o.r,0,Math.PI*2);x.fill();x.strokeStyle="#fff4";x.lineWidth=2;x.stroke()}
+ function loop(){x.clearRect(0,0,W,H);t++;stars.forEach(s=>{s.y+=s.s*(st==="oyun"?2:1);if(s.y>H)s.y=0;x.fillStyle="#fff";x.globalAlpha=s.s/2.5;x.fillRect(s.x,s.y,s.s,s.s)});x.globalAlpha=1;
+  if(st==="bekle"){txt("🚀 MEBA ROKET",180,26);txt("Başlamak için dokun veya tuşa bas",220,13,0.8);txt("Rekor: "+best,260,15,0.9);roket()}
+  else if(st==="oyun"){
+   if(K.l)tx-=7;if(K.r)tx+=7;tx=Math.max(22,Math.min(W-22,tx));px+=(tx-px)*.35;
+   if(t%Math.max(12,40-Math.floor(sc/30))===0)ob.push({x:20+R()*(W-40),y:-20,r:12+R()*14,v:2.5+R()*2+sc/100});
+   ob.forEach(o=>o.y+=o.v);ob=ob.filter(o=>o.y<H+30);sc++;
+   for(let o of ob){const dx=px-o.x,dy=(H-70)-o.y;if(Math.hypot(dx,dy)<o.r+16){bit();break}}
+   ob.forEach(eng);roket();txt(sc+"",50,32);txt("Rekor: "+best,80,12,0.7)
+  }else{
+   ob.forEach(eng);roket();
+   x.fillStyle="#0009";x.fillRect(20,120,W-40,240);
+   txt("💥 OYUN BİTTİ",170,24);txt("Puan: "+sc,215,22);
+   if(sc>=best&&sc>0)txt("🏆 YENİ REKOR!",245,14);txt("En Yüksek: "+best,275,14,0.8);txt("Ekrana dokunarak yeniden başla",320,12,0.7)
+  }
+  window.__raf=requestAnimationFrame(loop)}
+ window.__raf=requestAnimationFrame(loop)}
+function sor(){const i=$("q");if(!i)return;const v=i.value.trim();if(!v)return;const m=$("msgs");if(!m)return;m.innerHTML+=`<p class="me"><b>Siz:</b> ${v.replace(/</g,"&lt;")}</p>`;i.value="";
+ setTimeout(()=>{const t=S.tiers[me],a=v.toLowerCase();let r="Anladım! MEBA sisteminde size nasıl yardımcı olabilirim?";
+  if(a.includes("kademe")||a.includes("paket"))r="Şu anki kademeniz: <b>"+TIER[t].ad+"</b>. Fiyat: "+TIER[t].fiyat;
+  else if(a.includes("merhaba")||a.includes("selam"))r="Merhaba! Benim adım ABOT. Ailenizin dijital asistanıyım 🤖";
+  else if(a.includes("oyun"))r="Oyuna sol menüdeki 🎮 Oyun butonundan veya anasayfadaki karttan ulaşabilirsiniz!";
+  m.innerHTML+=`<p><b>ABOT:</b> ${r}</p>`;m.scrollTop=m.scrollHeight},600)}
+</script>
+
+<script id="meba-phone-shortcut-logic">
+function phoneGo(key){
+ const valid=["ana","smsbo","takvim","hava","alis","yap","kademe","oyun","yardim"];
+ if(!valid.includes(key))return;
+ if(typeof go==="function")go(key);
+ document.querySelectorAll("#phoneDock .phone-shortcut").forEach(b=>b.classList.toggle("active",b.dataset.page===key));
+}
+</script>
+
+</body></html>
